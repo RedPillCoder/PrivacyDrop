@@ -1,0 +1,9 @@
+# Runtime dependencies — PrivacyDrop
+#
+# Install with:  pip install -r requirements.txt
+# Python 3.8+ required (3.10+ recommended).
+
+Pillow>=10.0.0          # image processing & re-encoding
+pikepdf>=8.0.0          # PDF sanitisation
+pillow-heif>=0.15.0     # HEIC / HEIF (iPhone) support
+tkinterdnd2>=0.4.0      # native drag & drop for tkinter

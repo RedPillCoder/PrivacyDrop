@@ -1,0 +1,45 @@
+# PrivacyDrop — git ignore
+
+# Build / distribution
+dist/
+build/
+*.spec.bak
+release/
+*.exe
+*.msi
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+*.egg
+
+# Virtual environments
+.venv/
+venv/
+ENV/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+desktop.ini
+
+# Test artifacts
+tests/__pycache__/
+.pytest_cache/
+.coverage
+htmlcov/
+
+# Config (contains user prefs — never commit)
+.privacydrop.json
+config.json
