@@ -1,0 +1,57 @@
+# PrivacyDrop CI — run the full test suite on every push / PR.
+#
+# Tests run on Ubuntu (the engine is platform-independent) so we get fast,
+# cheap CI without needing a Windows runner.  The Windows exe build is
+# handled separately by the release workflow.
+
+name: CI
+
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+
+jobs:
+  test:
+    name: Test suite (Python ${{ matrix.python }})
+    runs-on: ubuntu-latest
+    strategy:
+      matrix:
+        python: ["3.10", "3.11", "3.12", "3.13"]
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+          cache: pip
+
+      - name: Install dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements-dev.txt
+
+      - name: Run tests
+        run: |
+          python -m tests.test_engine
+          python -m tests.test_full
+          python -m tests.test_security
+          python -m tests.test_privacy
+          python -m tests.test_app_features
+
+      - name: GUI smoke test (headless)
+        if: matrix.python == '3.12'
+        run: |
+          sudo apt-get update -qq && sudo apt-get install -y -qq xvfb > /dev/null
+          xvfb-run -a python tests/smoke_gui.py
+
+      - name: Verify version consistency
+        run: |
+          python -c "
+          from version import APP_VERSION
+          v = open('VERSION').read().strip()
+          assert APP_VERSION == v, f'{APP_VERSION} != {v}'
+          print(f'Version OK: {v}')
+          "
