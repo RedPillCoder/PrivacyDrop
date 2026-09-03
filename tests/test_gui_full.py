@@ -71,7 +71,11 @@ def main():
     os.makedirs(TMP)
 
     print("\n[GUI: options + batch + worker]")
-    root = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root = _tk.Tk()
     a = appmod.PrivacyDropApp(root)
 
     # --- folder recursion: mixed folder with subdir + unsupported file
@@ -139,7 +143,11 @@ def main():
               for i in a.items if i["out"]))
 
     print("\n[GUI: subfolder mode]")
-    root = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root = _tk.Tk()
     a = appmod.PrivacyDropApp(root)
     a.subfolder.set(True)
     src = os.path.join(TMP, "subfolder_src.jpg")
@@ -155,7 +163,11 @@ def main():
           item["out"])
 
     print("\n[GUI: error handling — password PDF + corrupt file]")
-    root = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root = _tk.Tk()
     a = appmod.PrivacyDropApp(root)
     import pikepdf
     pw = os.path.join(TMP, "locked.pdf")

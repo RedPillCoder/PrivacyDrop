@@ -1,4 +1,4 @@
-﻿"""Tests for the UX / convenience feature set:
+"""Tests for the UX / convenience feature set:
 
   * persistent preferences (config module) — load/save/sanitize
   * JPEG alias extensions (.jfif / .jpe)
@@ -166,7 +166,11 @@ def t_gui_features():
         os.unlink(cfg)
     config.save({"suffix": "_scrubbed", "strip_icc": True, "topmost": True})
 
-    root = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as tk
+        root = tk.Tk()
     a = appmod.PrivacyDropApp(root)
 
     # settings loaded
@@ -212,7 +216,11 @@ def t_gui_features():
     check("custom suffix used", by_path[paths[0]]["out"].endswith("_scrubbed.jpg"))
 
     # drag-source data for a cleaned row
-    root2 = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root2 = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root2 = _tk.Tk()
     a2 = appmod.PrivacyDropApp(root2)
     p = os.path.join(TMP, "drag.jpg")
     Image.new("RGB", (20, 20), (1, 2, 3)).save(p, "JPEG",
@@ -244,7 +252,11 @@ def t_gui_features():
     a2.root.mainloop()
 
     # context menu / retry / remove behaviours
-    root3 = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root3 = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root3 = _tk.Tk()
     a3 = appmod.PrivacyDropApp(root3)
     p3 = os.path.join(TMP, "retry.jpg")
     Image.new("RGB", (20, 20), (9, 9, 9)).save(p3, "JPEG",
@@ -274,7 +286,11 @@ def t_gui_features():
     a3.root.mainloop()
 
     # save-on-close writes config
-    root4 = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root4 = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as _tk
+        root4 = _tk.Tk()
     a4 = appmod.PrivacyDropApp(root4)
     a4.suffix.set("_saved")
     a4._on_close()
