@@ -1,0 +1,58 @@
+# PrivacyDrop — automated release on git tag.
+#
+# Triggered when a tag matching v*.*.* is pushed.  Builds the Windows exe
+# under Wine, runs the test suite, creates the portable + source zips,
+# and uploads everything to a GitHub Release.
+
+name: Release
+
+on:
+  push:
+    tags: ["v*.*.*"]
+
+permissions:
+  contents: write
+
+jobs:
+  build:
+    name: Build & publish release
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+          cache: pip
+
+      - name: Install test dependencies
+        run: pip install -r requirements-dev.txt
+
+      - name: Run full test suite
+        run: |
+          python -m tests.test_engine
+          python -m tests.test_full
+          python -m tests.test_security
+          python -m tests.test_privacy
+          python -m tests.test_app_features
+
+      - name: Extract version from tag
+        id: version
+        run: echo "version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
+      - name: Build release artifacts
+        run: |
+          chmod +x build_release.sh
+          ./build_release.sh --skip-exe
+
+      - name: Create GitHub Release
+        uses: softprops/action-gh-release@v2
+        with:
+          name: PrivacyDrop v${{ steps.version.outputs.version }}
+          body_path: CHANGELOG.md
+          files: |
+            release/${{ steps.version.outputs.version }}/*
+          fail_on_unmatched_files: true
+          draft: true
+          prerelease: false
