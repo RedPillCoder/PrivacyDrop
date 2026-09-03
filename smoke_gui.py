@@ -1,4 +1,4 @@
-﻿"""Headless GUI smoke test: drives the real app, cleans a file, checks UI."""
+"""Headless GUI smoke test: drives the real app, cleans a file, checks UI."""
 import os
 import shutil
 import sys
@@ -30,7 +30,11 @@ def main():
     src = os.path.join(TMP, "photo.jpg")
     make_jpeg(src)
 
-    root = appmod.TkinterDnD.Tk()
+    if appmod.HAS_DND:
+        root = appmod.TkinterDnD.Tk()
+    else:
+        import tkinter as tk
+        root = tk.Tk()
     a = appmod.PrivacyDropApp(root)
     a.add_path(src)
     assert len(a.items) == 1, "item added"

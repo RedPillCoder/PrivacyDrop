@@ -533,13 +533,16 @@ class PrivacyDropApp:
                 parts.append(f"{counts['skipped']} skipped")
             if counts["error"]:
                 parts.append(f"{counts['error']} failed")
+            # Python 3.10/3.11 don't allow backslashes inside f-string
+            # expressions, so we pre-compute the separator.
+            sep = "\u00b7 "
             if counts["error"]:
                 self.banner.configure(
-                    text=f"\u2717  {'\u00b7 '.join(parts)} — see list for errors",
+                    text=f"\u2717  {sep.join(parts)} \u2014 see list for errors",
                     fg="#c0392b")
             else:
                 self.banner.configure(
-                    text=f"\u2713  {'\u00b7 '.join(parts)} — safe to share. "
+                    text=f"\u2713  {sep.join(parts)} \u2014 safe to share. "
                          f"Originals untouched.",
                     fg=COLOR_ACCENT)
 
